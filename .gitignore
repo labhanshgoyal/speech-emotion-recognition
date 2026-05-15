@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Dataset — audio files are too large for GitHub
+# Download from: https://www.kaggle.com/datasets/uwrfkiller/the-ravdess-emotional-speech-audio
+dataset/
+*.wav
+*.mp3
+*.flac
+*.ogg
+
+# Trained models
+models/*.pkl
+
+# Generated reports/images
+reports/
+
+# Temporary files
+temp_recording.wav
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/
+
+# Logs
+*.log
