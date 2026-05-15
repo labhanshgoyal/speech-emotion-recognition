@@ -20,6 +20,7 @@ ENV/
 # Dataset — audio files are too large for GitHub
 # Download from: https://www.kaggle.com/datasets/uwrfkiller/the-ravdess-emotional-speech-audio
 dataset/
+!dataset/DOWNLOAD_DATASET.txt
 *.wav
 *.mp3
 *.flac
