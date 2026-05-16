@@ -5,6 +5,8 @@ import soundfile as sf
 def extract_feature(file_name, mfcc=True, chroma=True, mel=True):
     with sf.SoundFile(file_name) as sound_file:
         X = sound_file.read(dtype="float32")
+        if X.ndim > 1:
+            X = X.mean(axis=1)
         sample_rate = sound_file.samplerate
         result = np.array([])
 
