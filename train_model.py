@@ -1,5 +1,6 @@
 import pickle 
 import os
+from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score
 from load_data import load_data
@@ -7,6 +8,9 @@ from load_data import load_data
 if __name__ == "__main__":
     print("Loading data...")
     x_train, x_test, y_train, y_test = load_data()
+    scaler = StandardScaler()
+    x_train = scaler.fit_transform(x_train)
+    x_test = scaler.transform(x_test)
     print(f"Training samples: {len(x_train)}, Testing samples: {len(x_test)}")
 
     model = MLPClassifier(
@@ -30,3 +34,7 @@ if __name__ == "__main__":
     with open("models/ser_model.pkl", "wb") as f:
         pickle.dump(model, f)
     print("\nModel saved to models/ser_model.pkl")
+
+    with open("models/scaler.pkl", "wb") as f:
+        pickle.dump(scaler, f)
+    print("\nScaler saved to models/scaler.pkl")
