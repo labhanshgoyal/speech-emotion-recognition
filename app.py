@@ -24,6 +24,7 @@ def predict_emotion(audio_path):
     features_scaled = scaler.transform([features])
     emotion = model.predict(features_scaled)[0]
     return EMOTION_LABELS[emotion]
+
 app = gr.Interface(
     fn=predict_emotion,
     inputs=gr.Audio(type="filepath", label="Upload a .wav audio file"),
@@ -31,4 +32,5 @@ app = gr.Interface(
     title="Speech Emotion Recognition",
     description="Upload a .wav audio file and the model will predict the speaker's emotion."
 )
+
 app.launch()
