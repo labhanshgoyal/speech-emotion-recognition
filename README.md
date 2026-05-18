@@ -1,89 +1,176 @@
-# Speech Emotion Recognition
+# 🎙️ Speech Emotion Recognition (SER)
 
-A machine learning project that detects human emotion from speech audio using the RAVDESS dataset.
+> An end-to-end Machine Learning project that detects human emotions from voice recordings.
 
-## Project Overview
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-MLPClassifier-orange?logo=scikit-learn)
+![librosa](https://img.shields.io/badge/Audio-librosa-green)
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
-This project builds an end-to-end Speech Emotion Recognition (SER) system:
-1. **Audio Exploration** — visualize raw waveforms
-2. **Feature Extraction** — MFCC (40) + Chroma (12) + Mel Spectrogram (128) = 180 features per file
-3. **Data Loading** — process all 1,440 RAVDESS audio files
-4. **Model Training** — MLPClassifier neural network with StandardScaler
-5. **Evaluation** — confusion matrix and classification report
-6. **Prediction** — predict emotion from any `.wav` file
-7. **Web App** — Gradio interface for live demo
+---
 
-## Results
+## 📌 Project Overview
 
-- **Dataset:** RAVDESS (1,440 audio files, 24 actors, 8 emotions)
-- **Model:** MLPClassifier (300 hidden neurons, ReLU activation)
-- **Accuracy:** 67.22%
+This project builds a system that classifies the **emotion of a speaker** from a short audio clip. It uses the **RAVDESS dataset** (1,440 `.wav` files, 24 actors, 8 emotions) and extracts three audio features — **MFCC, Chroma, and Mel Spectrogram** — before training an **MLP (Multi-Layer Perceptron) neural network** classifier.
 
-## Emotions Detected
+**Recognized Emotions:** Neutral · Calm · Happy · Sad · Angry · Fearful · Disgust · Surprised
 
-| Code | Emotion |
-|------|---------|
-| 01 | 😐 Neutral |
-| 02 | 😌 Calm |
-| 03 | 😄 Happy |
-| 04 | 😢 Sad |
-| 05 | 😠 Angry |
-| 06 | 😨 Fearful |
-| 07 | 🤢 Disgust |
-| 08 | 😲 Surprised |
+---
 
-## Project Structure
+## 🗺️ Workflow
+
+```
+Raw Audio (.wav)
+      ↓
+Feature Extraction (MFCC + Chroma + Mel)  ← librosa
+      ↓
+Train / Test Split                         ← sklearn
+      ↓
+MLPClassifier (Neural Network)             ← sklearn
+      ↓
+Evaluate (Accuracy, Confusion Matrix)
+      ↓
+Save Model (.pkl)                          ← pickle
+      ↓
+Real-Time Prediction (Mic / File)
+      ↓
+(Bonus) Gradio Web App Demo
+```
+
+---
+
+## 📁 Project Structure
 
 ```
 SER Project/
-├── explore_audio.py      # Step 1: Audio visualization
-├── extract_features.py   # Step 2: Feature extraction
-├── load_data.py          # Step 3: Dataset loading + train/test split
-├── train_model.py        # Step 4: Train + save the model
-├── evaluate.py           # Step 5: Confusion matrix + classification report
-├── predict.py            # Step 6: Predict emotion from audio file
-├── app.py                # Step 7: Gradio web app
-├── models/               # Saved model files (not tracked in git)
-├── dataset/              # RAVDESS audio files (not tracked in git)
-└── requirements.txt      # Python dependencies
+│
+├── dataset/              ← RAVDESS audio files (download separately)
+│   ├── Actor_01/
+│   └── ...
+│
+├── src/
+│   ├── __init__.py
+│   ├── extract_features.py   ← MFCC, Chroma, Mel extraction
+│   ├── data_loader.py        ← Dataset loading & train/test split
+│   ├── train_model.py        ← MLP training & model saving
+│   ├── evaluate.py           ← Accuracy, confusion matrix
+│   └── predict.py            ← Real-time / file-based prediction
+│
+├── models/
+│   └── ser_model.pkl         ← Trained model (generated after training)
+│
+├── reports/
+│   └── confusion_matrix.png  ← Generated after evaluation
+│
+├── app.py                    ← Gradio demo web app
+├── requirements.txt
+├── .gitignore
+└── README.md
 ```
 
-## Setup
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
 
 ```bash
-# Create virtual environment
-python -m venv venv
-.\venv\Scripts\Activate.ps1
+git clone https://github.com/YOUR_USERNAME/speech-emotion-recognition.git
+cd speech-emotion-recognition
+```
 
-# Install dependencies
+### 2. Install Dependencies
+
+```bash
 pip install -r requirements.txt
 ```
 
-## Download Dataset
+### 3. Download the Dataset
 
-See `dataset/DOWNLOAD_DATASET.txt` for instructions on downloading the RAVDESS dataset.
+- Download **RAVDESS** from [Kaggle](https://www.kaggle.com/datasets/uwrfkiller/the-ravdess-emotional-speech-audio)
+- Extract and place the `Actor_*` folders inside the `dataset/` directory
 
-## Usage
+### 4. Train the Model
 
 ```bash
-# Train the model
-python train_model.py
-
-# Evaluate the model
-python evaluate.py
-
-# Predict emotion from an audio file
-python predict.py path/to/audio.wav
-
-# Run the Gradio web app
-python app.py
+python src/train_model.py
 ```
 
-## Tech Stack
+### 5. Evaluate the Model
 
-- **Python 3.x**
-- **librosa** — audio feature extraction
-- **scikit-learn** — MLPClassifier, StandardScaler, train_test_split
-- **soundfile** — audio file reading
-- **gradio** — web interface
-- **matplotlib / seaborn** — visualization
+```bash
+python src/evaluate.py
+```
+
+### 6. Predict from a File
+
+```bash
+python src/predict.py --file path/to/audio.wav
+```
+
+### 7. Live Microphone Prediction
+
+```bash
+python src/predict.py
+```
+
+### 8. Launch the Web App Demo
+
+```bash
+python app.py
+# Open http://localhost:7860
+```
+
+---
+
+## 📊 Results
+
+| Metric | Value |
+|---|---|
+| Accuracy | ~72%–80% |
+| Features used | MFCC (40) + Chroma (12) + Mel (128) = **180 total** |
+| Model | MLPClassifier — 1 hidden layer (300 neurons) |
+| Dataset | RAVDESS — 1,440 audio files, 8 emotions |
+
+---
+
+## 🔬 Features Extracted
+
+| Feature | Description | Size |
+|---|---|---|
+| **MFCC** | Mel Frequency Cepstral Coefficients — captures voice texture & tonal quality | 40 |
+| **Chroma** | Energy distribution across 12 pitch classes | 12 |
+| **Mel Spectrogram** | Frequency-to-perception mapping of audio | 128 |
+
+---
+
+## 🛠️ Tech Stack
+
+- **Python 3.8+**
+- **librosa** — audio analysis and feature extraction
+- **scikit-learn** — MLPClassifier, train/test split, metrics
+- **numpy / pandas** — data handling
+- **matplotlib / seaborn** — visualisation
+- **gradio** — demo web app
+- **pickle** — model serialisation
+
+---
+
+## 📚 Dataset
+
+**RAVDESS** — Ryerson Audio-Visual Database of Emotional Speech and Song
+- 24 professional actors (12M + 12F)
+- 8 emotions recorded at 2 intensity levels
+- Download: https://www.kaggle.com/datasets/uwrfkiller/the-ravdess-emotional-speech-audio
+
+---
+
+## 👨‍💻 Author
+
+Made with ❤️ as part of a Data Science learning journey.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
