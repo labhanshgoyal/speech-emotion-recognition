@@ -165,12 +165,5 @@ python app.py
 
 ---
 
-## 👨‍💻 Author
 
-Made with ❤️ as part of a Data Science learning journey.
 
----
-
-## 📄 License
-
-This project is licensed under the MIT License.
