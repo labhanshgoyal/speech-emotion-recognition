@@ -26,8 +26,8 @@ dataset/
 *.flac
 *.ogg
 
-# Trained models
-models/*.pkl
+# Trained models (included for Hugging Face deployment)
+# models/*.pkl
 
 # Generated reports/images
 reports/
