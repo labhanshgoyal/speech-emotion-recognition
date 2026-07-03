@@ -33,10 +33,10 @@ def predict_emotion(audio_path):
 
 app = gr.Interface(
     fn=predict_emotion,
-    inputs=gr.Audio(type="filepath", label="Upload a .wav audio file"),
+    inputs=gr.Audio(type="filepath", sources=["upload", "microphone"], label="Upload or Record Audio"),
     outputs=gr.Textbox(label="Detected Emotion"),
     title="Speech Emotion Recognition",
-    description="Upload a .wav audio file and the model will predict the speaker's emotion."
+    description="Upload a .wav audio file or record from your microphone — the model will predict the speaker's emotion."
 )
 
 app.launch()
