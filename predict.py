@@ -26,8 +26,14 @@ if __name__ == "__main__":
     with open("models/scaler.pkl", "rb") as f:
         scaler = pickle.load(f)
 
-    features = extract_feature(audio_file, mfcc=True, chroma=True, mel=True)
+    with open("models/label_encoder.pkl", "rb") as f:
+        le = pickle.load(f)
+
+    features = extract_feature(audio_file, mfcc=True, chroma=True, mel=True,
+                               delta_mfcc=False, zcr=False, rms=False,
+                               spectral_contrast=False, tonnetz=False)
     features_scaled = scaler.transform([features])
 
-    emotion = model.predict(features_scaled)[0]
+    emotion_code = model.predict(features_scaled)[0]
+    emotion = le.inverse_transform([emotion_code])[0]
     print(f"\nDetected Emotion: {EMOTION_EMOJI[emotion]}")

@@ -8,6 +8,9 @@ with open("models/ser_model.pkl", "rb") as f:
 with open("models/scaler.pkl", "rb") as f:
     scaler = pickle.load(f)
 
+with open("models/label_encoder.pkl", "rb") as f:
+    le = pickle.load(f)
+
 EMOTION_LABELS = {
     "neutral": "😐 Neutral",
     "calm": "😌 Calm",
@@ -20,9 +23,12 @@ EMOTION_LABELS = {
 }
 
 def predict_emotion(audio_path):
-    features = extract_feature(audio_path, mfcc=True, chroma=True, mel=True)
+    features = extract_feature(audio_path, mfcc=True, chroma=True, mel=True,
+                               delta_mfcc=False, zcr=False, rms=False,
+                               spectral_contrast=False, tonnetz=False)
     features_scaled = scaler.transform([features])
-    emotion = model.predict(features_scaled)[0]
+    emotion_code = model.predict(features_scaled)[0]
+    emotion = le.inverse_transform([emotion_code])[0]
     return EMOTION_LABELS[emotion]
 
 app = gr.Interface(
