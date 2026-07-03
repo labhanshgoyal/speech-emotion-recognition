@@ -15,9 +15,7 @@ jobs:
           lfs: true
 
       - name: Push to Hugging Face Spaces
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git push https://labhanshgoyal:$HF_TOKEN@huggingface.co/spaces/labhanshgoyal/speech-emotion-recognition master --force
+          git push https://labhanshgoyal:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/labhanshgoyal/speech-emotion-recognition master --force
