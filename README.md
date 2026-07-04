@@ -16,7 +16,19 @@ pinned: false
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-MLPClassifier-orange?logo=scikit-learn)
 ![librosa](https://img.shields.io/badge/Audio-librosa-green)
+![Gradio](https://img.shields.io/badge/Demo-Gradio-FF7C00?logo=gradio)
+![HF Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
+
+---
+
+## 🚀 Live Demo
+
+**Try it instantly — no setup required:**
+
+👉 **[https://huggingface.co/spaces/labhanshgoyal/speech-emotion-recognition](https://huggingface.co/spaces/labhanshgoyal/speech-emotion-recognition)**
+
+Upload a `.wav` file **or record directly from your microphone** — the model predicts the speaker's emotion in real time.
 
 ---
 
@@ -43,11 +55,11 @@ Benchmark 6 Classifiers                      ← sklearn
       ↓
 Evaluate (Accuracy, F1-Score, Confusion Matrix)
       ↓
-Save Best Model (.pkl)                        ← pickle
+Save Best Model + Scaler + Label Encoder (.pkl) ← pickle
       ↓
-Real-Time Prediction (File)
+Real-Time Prediction (File or Microphone)
       ↓
-Gradio Web App Demo
+Gradio Web App → Deployed on Hugging Face Spaces
 ```
 
 ---
@@ -61,23 +73,28 @@ SER Project/
 │   ├── Actor_01/
 │   └── ...
 │
-├── extract_features.py       ← MFCC, Chroma, Mel extraction (+ optional advanced features)
+├── extract_features.py       ← MFCC, Chroma, Mel extraction (+ 5 optional advanced features)
 ├── load_data.py              ← Dataset loading, train/test split & augmentation support
 ├── train_model.py            ← Multi-classifier benchmarking & model saving
 ├── evaluate.py               ← Accuracy, F1-score, confusion matrix
-├── predict.py                ← File-based prediction
+├── predict.py                ← File-based CLI prediction
 ├── augment.py                ← Data augmentation (noise, pitch shift, time stretch)
 ├── explore_audio.py          ← Audio visualisation & exploration
 │
 ├── models/
-│   ├── ser_model.pkl         ← Trained model (generated after training)
-│   ├── scaler.pkl            ← Feature scaler
-│   └── label_encoder.pkl     ← Label encoder for emotion classes
+│   ├── ser_model.pkl         ← Trained MLPClassifier
+│   ├── scaler.pkl            ← StandardScaler for feature normalisation
+│   └── label_encoder.pkl     ← LabelEncoder for emotion class decoding
+│
+├── .github/
+│   └── workflows/
+│       └── sync_to_hf.yml    ← GitHub Actions: auto-sync to Hugging Face Spaces
 │
 ├── confusion_matrix.png      ← Generated after evaluation
 ├── waveform.png              ← Generated from explore_audio.py
 │
-├── app.py                    ← Gradio demo web app
+├── app.py                    ← Gradio web app (upload or microphone)
+├── upload_models.py          ← Utility: upload model files to HF Spaces
 ├── requirements.txt
 ├── .gitignore
 └── README.md
@@ -85,12 +102,12 @@ SER Project/
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Getting Started (Local)
 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/speech-emotion-recognition.git
+git clone https://github.com/labhanshgoyal/speech-emotion-recognition.git
 cd speech-emotion-recognition
 ```
 
@@ -111,7 +128,7 @@ pip install -r requirements.txt
 python train_model.py
 ```
 
-This benchmarks 6 classifiers and automatically saves the best one.
+This benchmarks 6 classifiers and automatically saves the best model, scaler, and label encoder to `models/`.
 
 ### 5. Evaluate the Model
 
@@ -119,20 +136,32 @@ This benchmarks 6 classifiers and automatically saves the best one.
 python evaluate.py
 ```
 
-### 6. Predict from a File
+### 6. Predict from a File (CLI)
 
 ```bash
 python predict.py path/to/audio.wav
 ```
 
-### 7. Launch the Web App Demo
+### 7. Launch the Web App Locally
 
 ```bash
 python app.py
 # Open http://localhost:7860
 ```
 
-You can **upload a .wav file** or **record directly from your microphone** in the browser.
+You can **upload a `.wav` file** or **record directly from your microphone** in the browser.
+
+---
+
+## ☁️ Deployment
+
+The app is deployed on **Hugging Face Spaces** with automatic CI/CD via GitHub Actions.
+
+| Item | Details |
+|---|---|
+| 🔗 Live URL | [huggingface.co/spaces/labhanshgoyal/speech-emotion-recognition](https://huggingface.co/spaces/labhanshgoyal/speech-emotion-recognition) |
+| 🤖 CI/CD | GitHub Actions → auto-syncs to HF Spaces on every push to `master` |
+| 🧠 Runtime | Gradio SDK on HF Spaces (free tier) |
 
 ---
 
@@ -179,13 +208,21 @@ You can **upload a .wav file** or **record directly from your microphone** in th
 
 ## 🔬 Features Extracted
 
-| Feature | Description | Size |
-|---|---|---|
-| **MFCC** | Mel Frequency Cepstral Coefficients — captures voice texture & tonal quality | 40 |
-| **Chroma** | Energy distribution across 12 pitch classes | 12 |
-| **Mel Spectrogram** | Frequency-to-perception mapping of audio | 128 |
+The feature extractor (`extract_features.py`) supports 8 feature types:
 
-The feature extraction module also supports optional advanced features (Delta MFCC, ZCR, RMS Energy, Spectral Contrast, Tonnetz) for a total of 235 features, configurable via parameters.
+| Feature | Description | Size | Used in model |
+|---|---|---|---|
+| **MFCC** | Mel Frequency Cepstral Coefficients — voice texture & tonal quality | 40 | ✅ |
+| **Chroma** | Energy distribution across 12 pitch classes | 12 | ✅ |
+| **Mel Spectrogram** | Frequency-to-perception mapping of audio | 128 | ✅ |
+| Delta MFCC | Temporal dynamics of MFCC | 40 | Optional |
+| ZCR | Zero Crossing Rate — signal noisiness | 1 | Optional |
+| RMS Energy | Signal loudness | 1 | Optional |
+| Spectral Contrast | Difference in spectral peaks and valleys | 7 | Optional |
+| Tonnetz | Tonal centroid features | 6 | Optional |
+
+**Base feature vector: 180 dimensions** (MFCC + Chroma + Mel)  
+**Full feature vector: 235 dimensions** (all features enabled)
 
 ---
 
@@ -195,9 +232,10 @@ The feature extraction module also supports optional advanced features (Delta MF
 - **librosa** — audio analysis and feature extraction
 - **scikit-learn** — MLP, SVM, Random Forest, Gradient Boosting, metrics
 - **numpy** — data handling
-- **matplotlib / seaborn** — visualisation
-- **gradio** — demo web app
+- **soundfile** — audio file I/O
+- **gradio** — interactive web app with upload + microphone support
 - **pickle** — model serialisation
+- **GitHub Actions** — CI/CD pipeline to Hugging Face Spaces
 
 ---
 
